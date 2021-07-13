@@ -25,6 +25,10 @@ jobs:
       - name: build
         run: go build ./...
 
+      - name: build
+        working_dir: '.'
+        run: go version
+
       - name: cdk deploy
         uses: youyo/aws-cdk-github-actions@v2
         with:
