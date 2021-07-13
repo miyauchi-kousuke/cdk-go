@@ -1,0 +1,38 @@
+name: Deploy CDK
+
+on:
+  push:
+    branches:
+    - master
+
+env:
+  AWS_DEFAULT_REGION: ap-northeast-1
+
+jobs:
+
+  deploy:
+    timeout-minutes: 10
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: Extract Branch/Tag Names
+      run: |
+        echo "REF_NAME=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_DEFAULT_REGION }}
+
+    - name: Synth
+      run: |
+        cdk synth
+
+    - name: Deploy
+      run: |
+        cdk deploy
